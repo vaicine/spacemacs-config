@@ -53,7 +53,6 @@ values."
      emacs-lisp
      git
      github
-     slack
      ;; markdown
      ;; org
      (shell :variables
