@@ -347,6 +347,7 @@ you should place your code here."
   (global-set-key (kbd "C-c h <left>") 'hs-hide-block)
   (global-set-key (kbd "C-c h <right>") 'hs-show-block)
   (global-set-key (kbd "C-c h <up>") 'hs-hide-level)
+  (global-set-key (kbd "s-t") 'helm-projectile)
 
   ;; scroll one line at a time (less "jumpy" than defaults)
   (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
