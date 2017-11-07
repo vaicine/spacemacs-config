@@ -318,6 +318,9 @@ This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
 
+  ;; Activate column indicator in prog-mode and text-mode
+  (add-hook 'prog-mode-hook 'turn-on-fci-mode)
+  (add-hook 'text-mode-hook 'turn-on-fci-mode)
 
   (add-hook 'after-save-hook
           (lambda () (evil-escape)))
@@ -356,6 +359,7 @@ you should place your code here."
   (setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
   (setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
   (setq scroll-step 1) ;; keyboard scroll one line at a time
+  (setq fci-rule-color "#75715f")
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
@@ -379,7 +383,6 @@ you should place your code here."
  '(electric-indent-mode nil)
  '(emmet-indentation 2)
  '(evil-want-Y-yank-to-eol nil)
- '(fci-rule-color "#3C3D37" t)
  '(global-hl-line-mode t)
  '(highlight-changes-colors (quote ("#FD5FF0" "#AE81FF")))
  '(highlight-tail-colors
