@@ -395,7 +395,7 @@ you should place your code here."
      ("#A75B00" . 70)
      ("#F309DF" . 85)
      ("#3C3D37" . 100))))
- '(indent-guide-delay 0.3)
+ '(indent-guide-delay 0.3 t)
  '(indent-guide-global-mode nil)
  '(indent-tabs-mode nil)
  '(js-indent-level 2)
