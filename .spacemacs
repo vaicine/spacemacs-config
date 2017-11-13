@@ -31,6 +31,7 @@ values."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(
+     javascript
      python
      markdown
      elixir
@@ -399,6 +400,7 @@ you should place your code here."
  '(indent-guide-global-mode nil)
  '(indent-tabs-mode nil)
  '(js-indent-level 2)
+ '(js2-strict-missing-semi-warning nil)
  '(line-spacing 0.2)
  '(magit-diff-use-overlays nil)
  '(monokai-background "#282828")
