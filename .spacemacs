@@ -327,6 +327,8 @@ you should place your code here."
   (setq helm-always-two-windows nil)
   (setq web-mode-enable-auto-closing nil)
 
+  (setq mac-option-modifier nil)
+
   (require 'company)
   (global-company-mode)
   (global-set-key (kbd "TAB") #'company-indent-or-complete-common)
