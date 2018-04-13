@@ -368,6 +368,18 @@ you should place your code here."
   (global-set-key (kbd "C-c h <right>") 'hs-show-block)
   (global-set-key (kbd "C-c h <up>") 'hs-hide-level)
   (global-set-key (kbd "s-t") 'helm-projectile)
+  (global-unset-key (kbd "<left>"))
+  (global-unset-key (kbd "<right>"))
+  (global-unset-key (kbd "<up>"))
+  (global-unset-key (kbd "<down>"))
+  (global-unset-key (kbd "<C-left>"))
+  (global-unset-key (kbd "<C-right>"))
+  (global-unset-key (kbd "<C-up>"))
+  (global-unset-key (kbd "<C-down>"))
+  (global-unset-key (kbd "<M-left>"))
+  (global-unset-key (kbd "<M-right>"))
+  (global-unset-key (kbd "<M-up>"))
+  (global-unset-key (kbd "<M-down>"))
 
   ;; scroll one line at a time (less "jumpy" than defaults)
   (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
