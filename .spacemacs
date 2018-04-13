@@ -333,16 +333,6 @@ you should place your code here."
   (global-company-mode)
   (global-set-key (kbd "TAB") #'company-indent-or-complete-common)
 
-  (require 'vue-mode)
-  (add-to-list 'company-backends 'company-tern)
-  (add-hook 'js-mode-hook #'tern-mode)
-  (add-to-list 'vue-mode-hook #'tern-mode smartparens-mode)
-  (setq mmm-js-mode-exit-hook (lambda () (setq tern-mode nil)))
-  (setq mmm-js-mode-enter-hook (lambda () (setq tern-mode t)))
-
-  ;; Don't indent vue mode
-  (add-to-list 'spacemacs-indent-sensitive-modes 'vue-mode)
-
   ;; Activate column indicator in prog-mode and text-mode
   (add-hook 'prog-mode-hook 'turn-on-fci-mode)
   (add-hook 'text-mode-hook 'turn-on-fci-mode)
