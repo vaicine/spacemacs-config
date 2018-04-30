@@ -52,6 +52,7 @@ values."
      ;; ----------------------------------------------------------------
      ;; helm
      auto-completion
+     syntax-checking
      colors
      ;; better-defaults
      ;; themes-megapack
