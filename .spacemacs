@@ -303,7 +303,7 @@ values."
    ;; `trailing' to delete only the whitespace at end of lines, `changed'to
    ;; delete only whitespace for changed lines or `nil' to disable cleanup.
    ;; (default nil)
-   dotspacemacs-whitespace-cleanup t
+   dotspacemacs-whitespace-cleanup 'all
    ))
 
 (defun dotspacemacs/user-init ()
@@ -424,8 +424,8 @@ you should place your code here."
      ("#A75B00" . 70)
      ("#F309DF" . 85)
      ("#3C3D37" . 100))))
- '(indent-guide-delay 0.3 t)
- '(indent-guide-global-mode t)
+ '(indent-guide-delay 0.3)
+ '(indent-guide-global-mode nil)
  '(indent-tabs-mode nil)
  '(js-indent-level 2)
  '(js2-strict-missing-semi-warning nil)
@@ -454,8 +454,9 @@ you should place your code here."
      ("*Help*" :height 0.4 :position bottom :noselect t :dedicated t :stick t))))
  '(pos-tip-background-color "#A6E22E")
  '(pos-tip-foreground-color "#282828")
+ '(python-indent-offset 2)
  '(ruby-insert-encoding-magic-comment nil)
- '(show-trailing-whitespace nil)
+ '(show-trailing-whitespace t)
  '(spacemacs-show-trailing-whitespace nil t)
  '(standard-indent 2)
  '(tab-always-indent (quote complete))
