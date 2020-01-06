@@ -31,41 +31,38 @@ values."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(
-     javascript
-     python
-     markdown
-     elixir
-     yaml
      csv
-     osx
-     html
-     (ruby :variables
-           ruby-version-manager 'rvm
-           ruby-test-runner 'rspec)
+     scala
+     ;; typescript
      javascript
-     react
-     ruby-on-rails
+     ;; react
+     html
+     yaml
+     (markdown :variables markdown-live-preview-engine 'vmd)
+     shell
+     (ruby :variables
+           ruby-version-manager 'rbenv
+           ruby-test-runner 'rspec)
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
      ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
      ;; <M-m f e R> (Emacs style) to install them.
      ;; ----------------------------------------------------------------
-     ;; helm
+     helm
      auto-completion
-     syntax-checking
      colors
-     ;; better-defaults
-     ;; themes-megapack
-     emacs-lisp
-     semantic
+     syntax-checking
+     osx
      git
      github
-     ranger
+     ;; better-defaults
+     emacs-lisp
+     ;; git
      ;; markdown
      ;; org
-     (shell :variables
-            shell-default-height 30
-            shell-default-position 'bottom)
+     ;; (shell :variables
+     ;;        shell-default-height 30
+     ;;        shell-default-position 'bottom)
      ;; spell-checking
      ;; syntax-checking
      (version-control :variables version-control-diff-side 'left)
@@ -74,15 +71,14 @@ values."
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
-   dotspacemacs-additional-packages '(vue-mode)
+   dotspacemacs-additional-packages '(feature-mode
+                                      rjsx-mode
+                                      prettier-js
+                                      )
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
-   dotspacemacs-excluded-packages
-   '(
-      scss-mode
-      php
-    )
+   dotspacemacs-excluded-packages '()
    ;; Defines the behaviour of Spacemacs when installing packages.
    ;; Possible values are `used-only', `used-but-keep-unused' and `all'.
    ;; `used-only' installs only explicitly used packages and uninstall any
@@ -101,6 +97,8 @@ values."
   ;; This setq-default sexp is an exhaustive list of all the supported
   ;; spacemacs settings.
   (setq-default
+   js2-basic-offset 2
+   js-indent-level 2
    ;; If non nil ELPA repositories are contacted via HTTPS whenever it's
    ;; possible. Set it to nil if you have no way to use HTTPS in your
    ;; environment, otherwise it is strongly recommended to let it set to t.
@@ -114,7 +112,7 @@ values."
    ;; when the current branch is not `develop'. Note that checking for
    ;; new versions works via git commands, thus it calls GitHub services
    ;; whenever you start Emacs. (default nil)
-   dotspacemacs-check-for-update nil
+   dotspacemacs-check-for-update t
    ;; If non-nil, a form that evaluates to a package directory. For example, to
    ;; use different package directories for different Emacs versions, set this
    ;; to `emacs-version'.
@@ -269,13 +267,23 @@ values."
    ;; scrolling overrides the default behavior of Emacs which recenters point
    ;; when it reaches the top or bottom of the screen. (default t)
    dotspacemacs-smooth-scrolling nil
-   ;; If non nil line numbers are turned on in all `prog-mode' and `text-mode'
-   ;; derivatives. If set to `relative', also turns on relative line numbers.
+   ;; Control line numbers activation.
+   ;; If set to `t' or `relative' line numbers are turned on in all `prog-mode' and
+   ;; `text-mode' derivatives. If set to `relative', line numbers are relative.
+   ;; This variable can also be set to a property list for finer control:
+   ;; '(:relative nil
+   ;;   :disabled-for-modes dired-mode
+   ;;                       doc-view-mode
+   ;;                       markdown-mode
+   ;;                       org-mode
+   ;;                       pdf-view-mode
+   ;;                       text-mode
+   ;;   :size-limit-kb 1000)
    ;; (default nil)
    dotspacemacs-line-numbers t
    ;; Code folding method. Possible values are `evil' and `origami'.
    ;; (default 'evil)
-   dotspacemacs-folding-method 'evil
+   dotspacemacs-folding-method 'origami
    ;; If non-nil smartparens-strict-mode will be enabled in programming modes.
    ;; (default nil)
    dotspacemacs-smartparens-strict-mode nil
@@ -298,7 +306,7 @@ values."
    ;; specified with an installed package.
    ;; Not used for now. (default nil)
    dotspacemacs-default-package-repository nil
-   ;; Delete whitespace while saving buffer. Possible values are Nocellara`all'
+   ;; Delete whitespace while saving buffer. Possible values are `all'
    ;; to aggressively delete empty line and long sequences of whitespace,
    ;; `trailing' to delete only the whitespace at end of lines, `changed'to
    ;; delete only whitespace for changed lines or `nil' to disable cleanup.
@@ -313,8 +321,9 @@ executes.
  This function is mostly useful for variables that need to be set
 before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
-  (setq ns-right-alternate-modifier (quote none))
-  (setq helm-split-window-default-side 'right)
+  (add-hook 'js2-mode-hook 'prettier-js-mode)
+  (add-hook 'web-mode-hook 'prettier-js-mode)
+  (add-hook 'rjsx-mode-hook 'prettier-js-mode)
   )
 
 (defun dotspacemacs/user-config ()
@@ -324,71 +333,15 @@ layers configuration.
 This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
-
-  (setq helm-always-two-windows nil)
-  (setq web-mode-enable-auto-closing nil)
-
-  (setq mac-option-modifier nil)
-
-  (require 'company)
-  (global-company-mode)
-  (global-set-key (kbd "TAB") #'company-indent-or-complete-common)
-
-  ;; Activate column indicator in prog-mode and text-mode
-  (add-hook 'prog-mode-hook 'turn-on-fci-mode)
-  (add-hook 'text-mode-hook 'turn-on-fci-mode)
-
-  (add-hook 'after-save-hook
-          (lambda () (evil-escape)))
-
-  ;; Highlight the mode line depending on evil state
-  (lexical-let ((default-color (cons (face-background 'mode-line)
-                                     (face-foreground 'mode-line))))
-    (add-hook 'post-command-hook
-              (lambda ()
-                (let ((color (cond ((minibufferp) default-color)
-                                   ((evil-insert-state-p) '("#68cc20" . "#ffffff"))
-                                   ((buffer-modified-p)   '("#f73160" . "#ffffff"))
-                                   (t default-color))))
-                  (set-face-background 'mode-line (car color))
-                  (set-face-foreground 'mode-line (cdr color))))))
-  ;; End highlight mode line depending on evil state
-
-  (add-hook 'ruby-mode-hook
-            (lambda () (hs-minor-mode)))
-
-  (eval-after-load "hideshow"
-    '(add-to-list 'hs-special-modes-alist
-                  `(ruby-mode
-                    ,(rx (or "def" "class" "module" "do" "{" "[")) ; Block start
-                    ,(rx (or "}" "]" "end"))                       ; Block end
-                    ,(rx (or "#" "=begin"))                        ; Comment start
-                    ruby-forward-sexp nil)))
-
-  (global-set-key (kbd "C-c h <left>") 'hs-hide-block)
-  (global-set-key (kbd "C-c h <right>") 'hs-show-block)
-  (global-set-key (kbd "C-c h <up>") 'hs-hide-level)
-  (global-set-key (kbd "s-t") 'helm-projectile)
-  (global-unset-key (kbd "<left>"))
-  (global-unset-key (kbd "<right>"))
-  (global-unset-key (kbd "<up>"))
-  (global-unset-key (kbd "<down>"))
-  (global-unset-key (kbd "<C-left>"))
-  (global-unset-key (kbd "<C-right>"))
-  (global-unset-key (kbd "<C-up>"))
-  (global-unset-key (kbd "<C-down>"))
-  (global-unset-key (kbd "<M-left>"))
-  (global-unset-key (kbd "<M-right>"))
-  (global-unset-key (kbd "<M-up>"))
-  (global-unset-key (kbd "<M-down>"))
-
-  ;; scroll one line at a time (less "jumpy" than defaults)
-  (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
-  (setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
-  (setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
-  (setq scroll-step 1) ;; keyboard scroll one line at a time
-  (setq fci-rule-color "#75715f")
   )
+
+(setq mac-option-modifier nil)
+
+(setq projectile-project-search-path '("~/dev/simplybusiness/" "~/dev/vaicine/"))
+
+;; Turn off js2 mode errors & warnings (we lean on eslint/standard)
+(setq js2-mode-show-parse-errors nil)
+(setq js2-mode-show-strict-warnings nil)
 
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
@@ -397,112 +350,20 @@ you should place your code here."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(ansi-color-names-vector
-   ["#282828" "#F92672" "#A6E22E" "#E6DB74" "#66D9EF" "#FD5FF0" "#A1EFE4" "#F8F8F2"])
- '(blink-cursor-mode nil)
  '(clean-aindent-mode t)
- '(comint-scroll-show-maximum-output nil)
- '(compilation-message-face (quote default))
- '(compilation-scroll-output nil)
- '(create-lockfiles nil)
  '(css-indent-offset 2)
- '(custom-safe-themes
-   (quote
-    ("f78de13274781fbb6b01afd43327a4535438ebaeec91d93ebdbba1e3fba34d3c" default)))
- '(electric-indent-mode t)
- '(emmet-indentation 2)
- '(evil-want-Y-yank-to-eol nil)
- '(global-hl-line-mode t)
- '(highlight-changes-colors (quote ("#FD5FF0" "#AE81FF")))
- '(highlight-tail-colors
-   (quote
-    (("#3C3D37" . 0)
-     ("#679A01" . 20)
-     ("#4BBEAE" . 30)
-     ("#1DB4D0" . 50)
-     ("#9A8F21" . 60)
-     ("#A75B00" . 70)
-     ("#F309DF" . 85)
-     ("#3C3D37" . 100))))
- '(indent-guide-delay 0.3)
- '(indent-guide-global-mode nil)
+ '(flycheck-ruby-rubocop-executable "~/.rbenv/shims/rubocop")
+ '(indent-guide-delay 0.3 t)
  '(indent-tabs-mode nil)
- '(js-indent-level 2)
- '(js2-strict-missing-semi-warning nil)
- '(line-spacing 0.2)
- '(magit-diff-use-overlays nil)
- '(monokai-background "#282828")
- '(monokai-distinct-fringe-background nil)
  '(package-selected-packages
    (quote
-    (vue-mode edit-indirect ssass-mode vue-html-mode fzf stickyfunc-enhance srefactor yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode helm-pydoc cython-mode company-anaconda anaconda-mode pythonic ranger tabbar ob-elixir flycheck-mix flycheck-credo alchemist elixir-mode magit-gh-pulls github-search github-clone github-browse-file gist gh marshal logito pcache floobits xterm-color shell-pop multi-term eshell-z eshell-prompt-extras esh-help yaml-mode slack emojify circe oauth2 websocket ht alert log4e gntp csv-mode rainbow-mode rainbow-identifiers color-identifiers-mode projectile-rails inflections feature-mode reveal-in-osx-finder pbcopy osx-trash osx-dictionary launchctl rubocop enh-ruby-mode web-mode tagedit slim-mode scss-mode sass-mode pug-mode less-css-mode helm-css-scss haml-mode emmet-mode company-web web-completion-data winum unfill solarized-theme madhat2r-theme fuzzy zonokai-theme zenburn-theme zen-and-art-theme underwater-theme ujelly-theme twilight-theme twilight-bright-theme twilight-anti-bright-theme tronesque-theme toxi-theme tao-theme tangotango-theme tango-plus-theme tango-2-theme sunny-day-theme sublime-themes subatomic256-theme subatomic-theme spacegray-theme soothe-theme soft-stone-theme soft-morning-theme soft-charcoal-theme smyx-theme seti-theme reverse-theme railscasts-theme purple-haze-theme professional-theme planet-theme phoenix-dark-pink-theme phoenix-dark-mono-theme pastels-on-dark-theme organic-green-theme omtose-phellack-theme oldlace-theme occidental-theme obsidian-theme noctilux-theme niflheim-theme naquadah-theme mustang-theme monokai-theme monochrome-theme molokai-theme moe-theme minimal-theme material-theme majapahit-theme lush-theme light-soap-theme jbeans-theme jazz-theme ir-black-theme inkpot-theme heroku-theme hemisu-theme hc-zenburn-theme gruvbox-theme gruber-darker-theme grandshell-theme gotham-theme gandalf-theme flatui-theme flatland-theme firebelly-theme farmhouse-theme espresso-theme dracula-theme django-theme darktooth-theme autothemer darkokai-theme darkmine-theme darkburn-theme dakrone-theme cyberpunk-theme color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized clues-theme cherry-blossom-theme busybee-theme bubbleberry-theme birds-of-paradise-plus-theme badwolf-theme apropospriate-theme anti-zenburn-theme ample-zen-theme ample-theme alect-themes afternoon-theme smeargle orgit org mwim mmm-mode markdown-toc markdown-mode magit-gitflow helm-gitignore helm-company helm-c-yasnippet gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter gh-md flycheck-pos-tip pos-tip flycheck evil-magit magit magit-popup git-commit with-editor diff-hl company-tern dash-functional tern company-statistics company auto-yasnippet ac-ispell auto-complete rvm ruby-tools ruby-test-mode rspec-mode robe rbenv rake minitest chruby bundler inf-ruby web-beautify livid-mode skewer-mode simple-httpd json-mode json-snatcher json-reformat js2-refactor yasnippet multiple-cursors js2-mode js-doc coffee-mode ws-butler window-numbering which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox spinner org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint info+ indent-guide ido-vertical-mode hydra hungry-delete hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make projectile pkg-info epl helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu highlight elisp-slime-nav dumb-jump f s diminish define-word column-enforce-mode clean-aindent-mode bind-map bind-key auto-highlight-symbol auto-compile packed dash aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core popup async quelpa package-build spacemacs-theme)))
- '(popwin-mode t)
- '(popwin:popup-window-position (quote right))
- '(popwin:special-display-config
-   (quote
-    (("*rake-compilation*" :height 0.4 :position right :noselect t :dedicated t :stick t)
-     ("*rspec-compilation*" :height 0.4 :position right :noselect t :dedicated t :stick t)
-     ("*mix*" :noselect t :tail t)
-     ("^*WoMan.+*$" :regexp t :position bottom)
-     ("*nosetests*" :position bottom :noselect nil :dedicated t :stick t)
-     ("*grep*" :position bottom :noselect nil :dedicated t :stick t)
-     ("*ert*" :position bottom :noselect nil :dedicated t :stick t)
-     (" *undo-tree*" :height 0.4 :position bottom :noselect nil :dedicated t :stick t)
-     ("*Async Shell Command*" :position bottom :noselect nil :dedicated t :stick t)
-     ("*Shell Command Output*" :position bottom :noselect nil :dedicated t :stick t)
-     ("*compilation*" :height 0.4 :position bottom :noselect t :dedicated t :stick t)
-     ("*Help*" :height 0.4 :position bottom :noselect t :dedicated t :stick t))))
- '(pos-tip-background-color "#A6E22E")
- '(pos-tip-foreground-color "#282828")
- '(python-indent-offset 2)
+    (prettier-js rjsx-mode lv transient csv-mode vmd-mode noflet ensime sbt-mode scala-mode tide typescript-mode sql-indent web-beautify livid-mode skewer-mode simple-httpd json-mode json-snatcher json-reformat js2-refactor multiple-cursors js2-mode js-doc company-tern dash-functional tern coffee-mode feature-mode origami web-mode tagedit slim-mode scss-mode sass-mode pug-mode helm-css-scss haml-mode emmet-mode company-web web-completion-data yaml-mode mmm-mode markdown-toc markdown-mode gh-md git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter diff-hl xterm-color shell-pop multi-term eshell-z eshell-prompt-extras esh-help rvm ruby-tools ruby-test-mode rubocop rspec-mode robe rbenv rake minitest chruby bundler inf-ruby smeargle reveal-in-osx-finder rainbow-mode rainbow-identifiers pbcopy osx-trash osx-dictionary orgit magit-gitflow magit-gh-pulls launchctl helm-gitignore helm-company helm-c-yasnippet gitignore-mode github-search github-clone github-browse-file gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gist gh marshal logito pcache ht fuzzy flycheck-pos-tip pos-tip flycheck evil-magit magit magit-popup git-commit ghub treepy graphql with-editor company-statistics company color-identifiers-mode auto-yasnippet yasnippet ac-ispell auto-complete ws-butler winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox spinner org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint indent-guide hydra hungry-delete hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make projectile pkg-info epl helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu highlight elisp-slime-nav dumb-jump f dash s diminish define-word column-enforce-mode clean-aindent-mode bind-map bind-key auto-highlight-symbol auto-compile packed aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core popup async)))
  '(ruby-insert-encoding-magic-comment nil)
- '(show-trailing-whitespace t)
- '(spacemacs-show-trailing-whitespace nil t)
  '(standard-indent 2)
- '(tab-always-indent (quote complete))
- '(tabbar-separator (quote (0.5)))
- '(truncate-lines nil)
- '(vc-annotate-background nil)
- '(vc-annotate-color-map
-   (quote
-    ((20 . "#F92672")
-     (40 . "#CF4F1F")
-     (60 . "#C26C0F")
-     (80 . "#E6DB74")
-     (100 . "#AB8C00")
-     (120 . "#A18F00")
-     (140 . "#989200")
-     (160 . "#8E9500")
-     (180 . "#A6E22E")
-     (200 . "#729A1E")
-     (220 . "#609C3C")
-     (240 . "#4E9D5B")
-     (260 . "#3C9F79")
-     (280 . "#A1EFE4")
-     (300 . "#299BA6")
-     (320 . "#2896B5")
-     (340 . "#2790C3")
-     (360 . "#66D9EF"))))
- '(vc-annotate-foreground nil)
- '(vc-annotate-very-old-color nil)
- '(web-mode-code-indent-offset 2)
- '(web-mode-css-indent-offset 2)
- '(web-mode-markup-indent-offset 2)
- '(web-mode-sql-indent-offset 2)
- '(weechat-color-list
-   (unspecified "#282828" "#3C3D37" "#F70057" "#F92672" "#86C30D" "#A6E22E" "#BEB244" "#E6DB74" "#40CAE4" "#66D9EF" "#FB35EA" "#FD5FF0" "#74DBCD" "#A1EFE4" "#F8F8F2" "#F8F8F0"))
- '(ws-butler-global-mode t))
-;; (custom-set-faces
-;;  ;; custom-set-faces was added by Custom.
-;;  ;; If you edit it by hand, you could mess it up, so be careful.
-;;  ;; Your init file should contain only one such instance.
-;;  ;; If there is more than one, they won't work right.
-;;  '(default ((((class color) (min-colors 257)) (:foreground "#F8F8F2" :background "#282828")) (((class color) (min-colors 89)) (:foreground "#F5F5F5" :background "#1B1E1C"))))
-;;  '(cursor ((t (:background "#fc9834" :foreground "#282828" :inverse-video t))))
-;;  '(hl-line ((t (:background "#2e2e2e")))))
+ '(tab-always-indent (quote complete)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:family "Menlo" :foundry "nil" :slant normal :weight normal :height 130 :width normal)))))
+ '(default ((((class color) (min-colors 257)) (:foreground "#F8F8F2" :background "#272822")) (((class color) (min-colors 89)) (:foreground "#F5F5F5" :background "#1B1E1C")))))
