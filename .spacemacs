@@ -337,7 +337,7 @@ you should place your code here."
 
 (setq mac-option-modifier nil)
 
-(setq projectile-project-search-path '("~/dev/simplybusiness/" "~/dev/vaicine/"))
+(setq projectile-project-search-path '("~/dev/vaicine/"))
 
 ;; Turn off js2 mode errors & warnings (we lean on eslint/standard)
 (setq js2-mode-show-parse-errors nil)
